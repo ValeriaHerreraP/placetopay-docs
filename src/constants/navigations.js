@@ -1,6 +1,200 @@
 import { LANGUAGES_CODES } from '@/components/LocaleProvider'
-import { Book, DocumentCode } from 'iconsax-react'
+import { Book, MonitorMobbile, Activity, SecurityCard, Link, Calendar, ShieldTick, DocumentCode, Courthouse } from 'iconsax-react'
 
+/**
+ * List of options to be displayed in the navigation selector
+ * 
+ * title: Title of the option
+ * description: Description of the option
+ * href: Route to redirect to
+ * icon: Icon to display
+ */
+export const NAMESPACES_SELECTOR = {
+  [LANGUAGES_CODES.ES]: [
+    {
+      title: 'Pagos',
+      description: 'Pagos en línea.',
+      href: '/payments',
+      icon: MonitorMobbile,
+    },
+    {
+      title: 'Web Checkout',
+      description: 'Página de pagos prediseñada.',
+      href: '/checkout',
+      icon: MonitorMobbile,
+    },
+    {
+      title: 'Gateway',
+      description: 'Recibe pagos por API',
+      href: '/gateway',
+      icon: DocumentCode,
+    },
+    {
+      title: '3DS Server',
+      description: 'Pagos más seguros',
+      href: '/three-d-s-server',
+      icon: Activity,
+    },
+    {
+      title: 'ACS',
+      description: 'Pagos más seguros',
+      href: '/acs',
+      icon: Activity,
+    },
+    {
+      title: 'Token Requestor',
+      description: 'Servicio de tokenización publica',
+      href: '/token-requestor',
+      icon: SecurityCard,
+    },
+    {
+      title: 'Link de Pago',
+      description: 'Crea y gestiona links de pago',
+      href: '/payment-links',
+      icon: Link,
+    },
+    {
+      title: 'Micrositios',
+      description: 'Creación y gestión de micrositios',
+      href: '/microsites',
+      icon: Calendar,
+    },
+    {
+      title: 'Account Validator',
+      description: 'Verificación de cuentas',
+      href: '/account-validator',
+      icon: SecurityCard,
+    },
+    {
+      title: 'Api Scudo',
+      description: 'Control de fraude',
+      href: '/api-scudo',
+      icon: ShieldTick,
+    },
+    {
+      title: 'Autodeclaraciones',
+      description: 'Gestión de declaraciones',
+      href: '/selfdeclarations',
+      icon: Courthouse,
+    },
+  ],
+  [LANGUAGES_CODES.EN]: [
+    {
+      title: 'Payments',
+      description: 'Online Payments.',
+      href: '/en/payments',
+      icon: MonitorMobbile,
+    },
+    {
+      title: 'Web Checkout',
+      description: 'Pre-designed payment page.',
+      href: '/en/checkout',
+      icon: MonitorMobbile,
+    },
+    {
+      title: 'Gateway',
+      description: 'Receive payments via API.',
+      href: '/en/gateway',
+      icon: DocumentCode,
+    },
+    {
+      title: '3DS Server',
+      description: 'Safer payments.',
+      href: '/en/three-d-s-server',
+      icon: Activity,
+    },
+    {
+      title: 'ACS',
+      description: 'Safer payments.',
+      href: '/en/acs',
+      icon: Activity,
+    },
+    {
+      title: 'Token Requestor',
+      description: 'Public tokenization service',
+      href: '/en/token-requestor',
+      icon: SecurityCard,
+    },
+    {
+      title: 'Payment Link',
+      description: 'Create and manage payment links',
+      href: '/en/payment-links',
+      icon: Link,
+    },
+
+    {
+      title: 'Microsites',
+      description: 'Create and manage microsites',
+      href: '/en/microsites',
+      icon: Calendar,
+    },
+
+    {
+      title: 'Account Validator',
+      description: 'Account verification',
+      href: '/account-validator',
+      icon: SecurityCard,
+    },
+    {
+      title: 'Api Scudo',
+      description: 'Fraud control',
+      href: '/en/api-scudo',
+      icon: ShieldTick,
+    },
+    {
+      title: 'Selfdeclarations',
+      description: 'Declaration management',
+      href: '/en/selfdeclarations',
+      icon: Courthouse,
+    },
+  ],
+}
+
+/** 
+ * List of options used to map the URL path to
+ * its corresponding path in the routes object
+ * 
+ * KEY : URL path
+ * VALUE : TAB_NAVIGATION key
+ */
+export const NAMESPACE_ROUTES = {
+  payments: 'payments',
+  checkout: 'checkout',
+  gateway: 'gateway',
+  'three-d-s-server': 'threeDsServer',
+  acs: 'acs',
+  sdks: 'sdks',
+  'token-requestor': 'tokenRequestor',
+  'payment-links': 'paymentLinks',
+  microsites: 'microsites',
+  ticket: 'ticket',
+  core: 'core',
+  'account-validator': 'accountValidator',
+  'api-scudo': 'apiScudo',
+  'selfdeclarations': 'selfdeclarations',
+}
+
+/**
+ * List of options that will be displayed in
+ * the left navigation menu within each page
+ * 
+ * KEY : TAB_NAVIGATION key
+ * VALUE : List of options
+ * 
+ * title: Title of the option
+ * identifier: Unique identifier of the option which must be included in the path to identify the object that is active on the page
+ * href: Route to redirect to
+ * icon: Icon to display
+ * links: List of sub-options
+ * 
+ * Sub-options (Sections):
+ * title: Title of the sub-option
+ * links: List of sub-options
+ * 
+ * Sub-options (Pages):
+ * title: Title of the sub-option
+ * href: Route to redirect to
+ */
 export const TAB_NAVIGATION = {
   payments: {
     [LANGUAGES_CODES.ES]: [
@@ -13,13 +207,101 @@ export const TAB_NAVIGATION = {
           {
             title: 'Pagos',
             links: [
-              { title: 'Introducción', href: '/payments' },
+              {
+                title: 'Introducción', href: '/payments'
+              },
+            ],
+          },
+          {
+            title: 'Link de pagos',
+            links: [
+              { title: 'Introducción', href: '/payments/payments-links/introduction' },
+              { title: 'Crear link de pagos', href: '/payments/payments-links/create-payment-link' },
+              { title: 'Gestionar link de pagos', href: '/payments/payments-links/link-management' }
+            ],
+          },
+          {
+            title: 'Pagos con código QR',
+            links: [
+              { title: 'Introducción', href: '/payments/qr/introduction' },
+              { title: 'Gestionar QR', href: '/payments/qr/qr-management' },
+            ],
+          },
+          {
+            title: 'Micrositios',
+            links: [
+              { title: 'Introducción', href: '/payments/introduction-to-microsites' },
+              {
+                title: 'Micrositio Abierto', links: [
+                  { title: 'Introducción', href: '/payments/microsite-open/introduction' },
+                  { title: 'Estructura de Campos', href: '/payments/microsite-open/fields' },
+
+                ],
+              },
+              {
+                title: 'Micrositio Cerrado', links: [
+                  { title: 'Introducción', href: '/payments/microsite-closed/introduction' },
+                  { title: 'Carga de Órdenes', href: '/payments/microsite-closed/charge-invoice' },
+                ],
+              },
+            ],
+          },
+          {
+            title: 'Micrositio Personalizado',
+            links: [
+              { title: 'Introducción', href: '/payments/microsite-customized/introduction' },
+              { title: 'Cómo Funciona', href: '/payments/microsite-customized/how-to-work' },
+              {
+                title: 'Integración',
+                links: [
+                  { title: 'Autenticación', href: '/payments/microsite-customized/authentication' },
+                  { title: 'Servicios', href: '/payments/microsite-customized/services' },
+                  { title: 'Manejo de errores', href: '/payments/microsite-customized/error-handling' },
+                  { title: 'Estructuras de datos', href: '/payments/microsite-customized/data-structures' },
+                ],
+              },
+            ],
+          },
+          {
+            title: 'Flujos de Pago',
+            links: [
+              { title: 'Proceso de pago en WebCheckout', href: '/payments/process-pay' },
+              { title: 'Preautorización', href: '/payments/preauthorization' },
             ],
           },
           {
             title: 'Medios de pago',
             links: [
-              { title: 'ACH Débito Bancario', href: '/payments/ach-bank-debit' },
+              {
+                title: 'Tarjetas',
+                links: [
+                  { title: 'EBT', href: '/payments/cards/ebt' },
+                ],
+              },
+              {
+                title: 'Débitos bancarios',
+                links: [
+                  { title: 'ACH Débito Bancario', href: '/payments/bank-redirects/ach-bank-debit' },
+                ],
+              },
+              {
+                title: 'Redireccionamientos bancarios',
+                links: [
+                  { title: 'CeroPay', href: '/payments/bank-redirects/ceropay' },
+                ],
+              },
+              {
+                title: 'Efectivo',
+                links: [
+                  { title: 'Pago en efectivo', href: '/payments/cash/cash' },
+                ],
+              },
+              {
+                title: 'Billeteras',
+                links: [
+                  { title: 'Click to Pay', href: '/payments/wallets/clicktopay' },
+                ],
+              }
             ],
           },
           {
@@ -44,10 +326,98 @@ export const TAB_NAVIGATION = {
               { title: 'Introduction', href: '/payments' },
             ],
           },
+
+          {
+            title: 'Payment Links',
+            links: [
+              { title: 'Introduction', href: '/payments/payments-links/introduction' },
+              { title: 'Create Payment Link', href: '/payments/payments-links/create-payment-link' },
+              { title: 'Manage Payment Links', href: '/payments/payments-links/link-management' }
+            ],
+          },
+          {
+            title: 'QR code payments',
+            links: [
+              { title: 'Introduction', href: '/payments/qr/introduction' },
+              { title: 'Manage QR code', href: '/payments/qr/qr-management' },
+            ],
+          },
+          {
+            title: 'Microsites',
+            links: [
+              { title: 'Introduction', href: '/payments/introduction-to-microsites' },
+              {
+                title: 'Open Microsite',
+                links: [
+                  { title: 'Introduction', href: '/payments/microsite-open/introduction' },
+                  { title: 'Field Structure', href: '/payments/microsite-open/fields' },
+                ],
+              },
+              {
+                title: 'Closed Microsite',
+                links: [
+                  { title: 'Introduction', href: '/payments/microsite-closed/introduction' },
+                  { title: 'Order Upload', href: '/payments/microsite-closed/charge-invoice' },
+                ],
+              },
+            ],
+          },
+          {
+            title: 'Custom Microsite',
+            links: [
+              { title: 'Introduction', href: '/payments/microsite-customized/introduction' },
+              { title: 'How to Work', href: '/payments/microsite-customized/how-to-work' },
+              {
+                title: 'Integration',
+                links: [
+                  { title: 'Authentication', href: '/payments/microsite-customized/authentication' },
+                  { title: 'Services', href: '/payments/microsite-customized/services' },
+                  { title: 'Error handling', href: '/payments/microsite-customized/error-handling' },
+                  { title: 'Data structures', href: '/payments/microsite-customized/data-structures' },
+                ],
+              },
+            ],
+          },
+          {
+            title: 'Payment Flows',
+            links: [
+              { title: 'Payment Process in Web Checkout', href: '/payments/process-pay' },
+              { title: 'Preauthorization', href: '/payments/preauthorization' },
+            ],
+          },
           {
             title: 'Payment methods',
             links: [
-              { title: 'ACH Bank Debit', href: '/payments/ach-bank-debit' },
+              {
+                title: 'Cards',
+                links: [
+                  { title: 'EBT', href: '/payments/cards/ebt' },
+                ],
+              },
+              {
+                title: 'Bank Debits',
+                links: [
+                  { title: 'ACH Bank Debit', href: '/payments/bank-redirects/ach-bank-debit' },
+                ],
+              },
+              {
+                title: 'Bank redirects',
+                links: [
+                  { title: 'CeroPay', href: '/payments/bank-redirects/ceropay' },
+                ],
+              },
+              {
+                title: 'Cash',
+                links: [
+                  { title: 'Cash payment', href: '/payments/cash/cash' },
+                ],
+              },
+              {
+                title: 'Wallets',
+                links: [
+                  { title: 'Click to Pay', href: '/payments/wallets/clicktopay' },
+                ],
+              }
             ],
           },
           {
@@ -75,6 +445,7 @@ export const TAB_NAVIGATION = {
               { title: 'Cómo Funciona', href: '/checkout/how-checkout-works' },
               { title: 'Plugins', href: '/checkout/plugins' },
               { title: 'Lightbox', href: '/checkout/lightbox' },
+              { title: 'Navegadores soportados', href: '/checkout/browser-support' },
             ],
           },
           {
@@ -107,6 +478,18 @@ export const TAB_NAVIGATION = {
               {
                 title: 'Fecha de expiración',
                 href: '/checkout/expiration',
+              },
+              {
+                title: 'Omitir resultado',
+                href: '/checkout/skip-result',
+              },
+              {
+                title: 'Metadata',
+                href: '/checkout/metadata',
+              },
+              {
+                title: 'Reintentos del proceso',
+                href: '/checkout/attempts-limit',
               },
             ],
           },
@@ -154,25 +537,26 @@ export const TAB_NAVIGATION = {
               { title: 'How it works', href: '/checkout/how-checkout-works' },
               { title: 'Plugins', href: '/checkout/plugins' },
               { title: 'Lightbox', href: '/checkout/lightbox' },
+              { title: 'Browser support', href: '/checkout/browser-support' },
             ],
           },
           {
             title: 'Integration',
             links: [
               { title: 'Authentication', href: '/checkout/authentication' },
-              { title: 'Create Session', href: '/checkout/create-session' },
+              { title: 'Create session', href: '/checkout/create-session' },
               { title: 'Notification', href: '/checkout/notification' },
               { title: 'Localization', href: '/checkout/localization' },
-              { title: 'Document Types', href: '/checkout/document-types' },
+              { title: 'Document types', href: '/checkout/document-types' },
               {
-                title: 'Additional Fields',
+                title: 'Additional fields',
                 href: '/checkout/additional-fields',
               },
               {
-                title: 'Amounts and Currencies',
+                title: 'Amounts and currencies',
                 href: '/checkout/tax-details',
               },
-              { title: 'Payment Methods', href: '/checkout/payment-methods' },
+              { title: 'Payment methods', href: '/checkout/payment-methods' },
               {
                 title: 'How to integrate with mobile',
                 href: '/checkout/integration/mobile',
@@ -183,12 +567,24 @@ export const TAB_NAVIGATION = {
               },
               { title: 'Refund', href: '/checkout/refund' },
               {
-                title: 'Processor Fields',
+                title: 'Processor fields',
                 href: '/checkout/processor-fields',
               },
               {
-                title: 'Expiration Date',
+                title: 'Expiration date',
                 href: '/checkout/expiration',
+              },
+              {
+                title: 'Skip result',
+                href: '/checkout/skip-result',
+              },
+              {
+                title: 'Metadata',
+                href: '/checkout/metadata',
+              },
+              {
+                title: 'Process retries',
+                href: '/checkout/attempts-limit',
               },
             ],
           },
@@ -273,6 +669,22 @@ export const TAB_NAVIGATION = {
                 title: 'Datos adicionales',
                 href: '/gateway/additional-data',
               },
+              {
+                title: 'Forwarding',
+                href: '/gateway/forwarding',
+              },
+              {
+                title: 'Retorno de tarjeta',
+                href: '/gateway/card-return',
+              },
+              {
+                title: 'Webhooks',
+                href: '/gateway/webhooks',
+              },
+              {
+                title: 'Indicador de iniciador de transacción',
+                href: '/gateway/initiator-indicator',
+              },
             ],
           },
         ],
@@ -309,6 +721,10 @@ export const TAB_NAVIGATION = {
               {
                 title: 'Operaciones con PinPad',
                 href: '/gateway/api/reference/pinpad',
+              },
+               {
+                title: 'Operaciones con ordenes de pago',
+                href: '/gateway/api/reference/cashorder',
               },
               {
                 title: 'Reporte de operaciones realizadas',
@@ -362,6 +778,22 @@ export const TAB_NAVIGATION = {
                 title: 'Additional data',
                 href: '/gateway/additional-data',
               },
+              {
+                title: 'Forwarding',
+                href: '/gateway/forwarding',
+              },
+              {
+                title: 'Card return',
+                href: '/gateway/card-return',
+              },
+              {
+                title: 'Webhooks',
+                href: '/gateway/webhooks',
+              },
+              {
+                title: 'Transaction Initiator Indicator',
+                href: '/gateway/initiator-indicator',
+              },
             ],
           },
         ],
@@ -398,6 +830,10 @@ export const TAB_NAVIGATION = {
                 href: '/gateway/api/reference/pinpad',
               },
               {
+                title: 'Cash orders operations',
+                href: '/gateway/api/reference/cashorder',
+              },
+              {
                 title: 'Report of operations carried out',
                 href: '/gateway/api/reference/report',
               },
@@ -407,7 +843,7 @@ export const TAB_NAVIGATION = {
       },
     ],
   },
-  'three-d-s-server': {
+  threeDsServer: {
     [LANGUAGES_CODES.ES]: [
       {
         title: 'Documentación',
@@ -450,6 +886,10 @@ export const TAB_NAVIGATION = {
               {
                 title: 'Flujo del servicio de 3DS Server',
                 href: '/three-d-s-server/service-flow',
+              },
+              {
+                title: '¿Qué es 3RI?',
+                href: '/three-d-s-server/information-3ri',
               },
             ],
           },
@@ -516,10 +956,6 @@ export const TAB_NAVIGATION = {
                 title: 'DAF: Digital Authentication Framework',
                 href: '/three-d-s-server/api/integration/session-d-a-f',
               },
-              {
-                title: 'Obtener información de una autenticación',
-                href: '/three-d-s-server/api/integration/authentication-info',
-              },
             ],
           },
           {
@@ -550,6 +986,10 @@ export const TAB_NAVIGATION = {
                 title: 'Valores devueltos en la respuesta',
                 href: '/three-d-s-server/api/transactions/values',
               },
+              {
+                title: 'Obtener información de una autenticación',
+                href: '/three-d-s-server/api/transactions/authentication-info',
+              },
             ],
           },
           {
@@ -562,6 +1002,10 @@ export const TAB_NAVIGATION = {
               {
                 title: 'API Sucursales',
                 href: '/three-d-s-server/api/merchants/branch',
+              },
+              {
+                title: 'Suscribir Modelos',
+                href: '/three-d-s-server/api/merchants/enrolment',
               },
             ],
           },
@@ -609,6 +1053,10 @@ export const TAB_NAVIGATION = {
               {
                 title: '3DS Server Service Flow',
                 href: '/three-d-s-server/service-flow',
+              },
+              {
+                title: 'What is 3RI?',
+                href: '/three-d-s-server/information-3ri',
               },
             ],
           },
@@ -675,10 +1123,6 @@ export const TAB_NAVIGATION = {
                 title: 'DAF: Digital Authentication Framework',
                 href: '/three-d-s-server/api/integration/session-d-a-f',
               },
-              {
-                title: 'Get authentication information',
-                href: '/three-d-s-server/api/integration/authentication-info',
-              },
             ],
           },
           {
@@ -709,6 +1153,10 @@ export const TAB_NAVIGATION = {
                 title: 'Values returned in the response',
                 href: '/three-d-s-server/api/transactions/values',
               },
+              {
+                title: 'Get authentication information',
+                href: '/three-d-s-server/api/transactions/authentication-info',
+              },
             ],
           },
           {
@@ -722,13 +1170,17 @@ export const TAB_NAVIGATION = {
                 title: 'Branches API',
                 href: '/three-d-s-server/api/merchants/branch',
               },
+              {
+                title: 'Enrolment model',
+                href: '/three-d-s-server/api/merchants/enrolment',
+              },
             ],
           },
         ],
       },
     ],
   },
-  'token-requestor': {
+  tokenRequestor: {
     [LANGUAGES_CODES.ES]: [
       {
         title: 'Documentación',
@@ -739,14 +1191,13 @@ export const TAB_NAVIGATION = {
           {
             title: 'Token requestor',
             links: [
-              { title: 'Introducción', href: '/token-requestor' },
               {
-                title: 'Tipos de identificación',
-                href: '/token-requestor/business-identification-types',
+                title: 'Introducción',
+                href: '/token-requestor'
               },
               {
-                title: 'Codigos de respuesta',
-                href: '/token-requestor/response-codes',
+                title: 'Definiciones clave',
+                href: '/token-requestor/definitions',
               },
             ],
           },
@@ -780,9 +1231,8 @@ export const TAB_NAVIGATION = {
             links: [{ title: 'Inicio', href: '/token-requestor/api' }],
           },
           {
-            title: 'API',
+            title: 'Administracion del ciclo del token',
             links: [
-              { title: 'Onboarding', href: '/token-requestor/api/onboarding' },
               {
                 title: 'Enroll card',
                 href: '/token-requestor/api/enroll-card',
@@ -793,10 +1243,9 @@ export const TAB_NAVIGATION = {
                 href: '/token-requestor/api/get-token-status',
               },
               {
-                title: 'Onboarding status',
-                href: '/token-requestor/api/onboarding-status',
+                title: 'Delete Token',
+                href: '/token-requestor/api/delete-token'
               },
-              { title: 'Get Keys', href: '/token-requestor/api/keys' },
             ],
           },
         ],
@@ -812,14 +1261,13 @@ export const TAB_NAVIGATION = {
           {
             title: 'Token requestor',
             links: [
-              { title: 'Introduction', href: '/token-requestor' },
               {
-                title: 'Merchant Identification Types',
-                href: '/token-requestor/business-identification-types',
+                title: 'Introduction',
+                href: '/token-requestor'
               },
               {
-                title: 'Response Codes',
-                href: '/token-requestor/response-codes',
+                title: 'Key definitions',
+                href: '/token-requestor/definitions',
               },
             ],
           },
@@ -853,23 +1301,24 @@ export const TAB_NAVIGATION = {
             links: [{ title: 'Home', href: '/token-requestor/api' }],
           },
           {
-            title: 'API',
+            title: 'Token cycle management',
             links: [
-              { title: 'Onboarding', href: '/token-requestor/api/onboarding' },
               {
                 title: 'Enroll card',
                 href: '/token-requestor/api/enroll-card',
               },
-              { title: 'Checkout', href: '/token-requestor/api/checkout' },
+              {
+                title: 'Checkout',
+                href: '/token-requestor/api/checkout'
+              },
               {
                 title: 'Get token status',
                 href: '/token-requestor/api/get-token-status',
               },
               {
-                title: 'Onboarding status',
-                href: '/token-requestor/api/onboarding-status',
+                title: 'Delete Token',
+                href: '/token-requestor/api/delete-token'
               },
-              { title: 'Get Keys', href: '/token-requestor/api/keys' },
             ],
           },
         ],
@@ -1101,7 +1550,7 @@ export const TAB_NAVIGATION = {
       },
     ],
   },
-  'account-validator': {
+  accountValidator: {
     [LANGUAGES_CODES.ES]: [
       {
         title: 'API',
@@ -1117,7 +1566,8 @@ export const TAB_NAVIGATION = {
               { title: '¿Cómo funciona?', href: '/account-validator/how-to-work' },
               { title: 'Flujo del usuario', href: '/account-validator/user-flow' },
               { title: 'Micro depósitos', href: '/account-validator/micro-deposits' },
-              { title: 'Soporte para Lightbox', href: '/account-validator/support' }
+              { title: 'Soporte para Lightbox', href: '/account-validator/support' },
+              { title: 'Webhook de Eventos', href: '/account-validator/webhooks' }
             ]
           },
           {
@@ -1146,7 +1596,8 @@ export const TAB_NAVIGATION = {
               { title: '¿How it works?', href: '/account-validator/how-to-work' },
               { title: 'User flow', href: '/account-validator/user-flow' },
               { title: 'Micro deposits', href: '/account-validator/micro-deposits' },
-              { title: 'Lightbox Support', href: '/account-validator/support' }
+              { title: 'Lightbox Support', href: '/account-validator/support' },
+              { title: 'Webhooks', href: '/account-validator/webhooks' }
             ]
           },
           {
@@ -1161,7 +1612,7 @@ export const TAB_NAVIGATION = {
       },
     ],
   },
-  'payment-links': {
+  paymentLinks: {
     [LANGUAGES_CODES.ES]: [
       {
         title: 'Documentación',
@@ -1463,6 +1914,10 @@ export const TAB_NAVIGATION = {
                 title: 'Procedimientos adicionales',
                 href: '/core/reference/tools'
               },
+              {
+                title: 'Acciones sobre facturas',
+                href: '/core/reference/invoice'
+              },
             ]
           },
         ],
@@ -1514,13 +1969,17 @@ export const TAB_NAVIGATION = {
                 title: 'Additional Procedures',
                 href: '/core/reference/tools'
               },
+              {
+                title: 'Actions on Invoices',
+                href: '/core/reference/invoice'
+              },
             ]
           },
         ],
       }
     ]
   },
-  'api-scudo': {
+  apiScudo: {
     [LANGUAGES_CODES.ES]: [
       {
         title: 'Documentación',
@@ -1558,7 +2017,7 @@ export const TAB_NAVIGATION = {
           {
             title: 'Reglas',
             links: [
-              { title: 'Kount', href:'/api-scudo/kount' }
+              { title: 'Kount', href: '/api-scudo/kount' }
             ]
           }
         ],
@@ -1600,14 +2059,14 @@ export const TAB_NAVIGATION = {
               { title: 'Scudo sequence', href: '/api-scudo/sequence' },
               { title: 'Data elements', href: '/api-scudo/elements' },
               { title: 'Signature', href: '/api-scudo/signature' },
-              { title: 'Amounts format', href: '/api-scudo/amounts-format'},
-              { title: 'Types of document', href: '/api-scudo/document-types',},
+              { title: 'Amounts format', href: '/api-scudo/amounts-format' },
+              { title: 'Types of document', href: '/api-scudo/document-types', },
             ],
           },
           {
             title: 'Rules',
             links: [
-              { title: 'Kount', href:'/api-scudo/kount' }
+              { title: 'Kount', href: '/api-scudo/kount' }
             ]
           }
         ],
@@ -1630,6 +2089,144 @@ export const TAB_NAVIGATION = {
                 title: '[Webhook] Notification of transaction resolved',
                 href: '/api-scudo/api/reference/notify-resolved-validation'
               },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  selfdeclarations: {
+    [LANGUAGES_CODES.ES]: [
+      {
+        title: 'Documentación',
+        identifier: 'selfdeclarations',
+        href: '/selfdeclarations',
+        icon: Book,
+        links: [
+          {
+            title: 'Autodeclaraciones',
+            links: [
+              { title: 'Introducción', href: '/selfdeclarations' },
+            ],
+          },
+          {
+            title: 'Manual de usuario',
+            links: [
+              { title: 'Contenido', href: '/selfdeclarations/content' },
+              {
+                title: 'General',
+                links: [
+                  { title: 'Filtros', href: '/selfdeclarations/general/filters' },
+                  { title: 'Solución a posibles problemas', href: '/selfdeclarations/general/problem-solutions' },
+                  { title: 'Idioma', href: '/selfdeclarations/general/language' },
+                  { title: 'Medidas de seguridad y contingencia', href: '/selfdeclarations/general/security-and-contingency' },
+                  { title: 'Gestión del servicio y mesa de ayuda', href: '/selfdeclarations/general/service-management-and-help-desk' },
+                ],
+              },
+              {
+                title: 'Usuario administrador',
+                links: [
+                  { title: 'Acciones', href: '/selfdeclarations/admin-user/actions' },
+                  { title: 'Entrada y salida del software', href: '/selfdeclarations/admin-user/entry-and-exit' },
+                ],
+              },
+              {
+                title: 'Usuario declarante',
+                links: [
+                  { title: 'Acciones', href: '/selfdeclarations/declarant-user/actions' },
+                  { title: 'Entrada y salida del software', href: '/selfdeclarations/declarant-user/entry-and-exit' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        title: 'API',
+        identifier: 'selfdeclarations/api',
+        href: '/selfdeclarations/api',
+        icon: DocumentCode,
+        links: [
+          {
+            title: 'Introducción',
+            links: [{ title: 'Inicio', href: '/selfdeclarations/api' }],
+          },
+          {
+            title: 'API',
+            links: [
+              { title: 'Botón de Pago - AIO', href: '/selfdeclarations/api/payment-button-AIO' },
+              { title: 'Information Request', href: '/selfdeclarations/api/information-request' },
+              { title: 'Income PDF', href: '/selfdeclarations/api/income-pdf' },
+              { title: 'Empresas - Creación/Actualización', href: '/selfdeclarations/api/companies' },
+              { title: 'Usuarios - Creación/Actualizacion', href: '/selfdeclarations/api/company-bidders' },
+            ],
+          },
+        ],
+      },
+    ],
+    [LANGUAGES_CODES.EN]: [
+      {
+        title: 'Documentation',
+        identifier: 'selfdeclarations',
+        href: '/en/selfdeclarations',
+        icon: Book,
+        links: [
+          {
+            title: 'Selfdeclarations',
+            links: [
+              { title: 'Introduction', href: '/selfdeclarations' },
+            ],
+          },
+          {
+            title: 'Manual de usuario',
+            links: [
+              { title: 'Content', href: '/selfdeclarations/content' },
+              {
+                title: 'General',
+                links: [
+                  { title: 'Filters', href: '/selfdeclarations/general/filters' },
+                  { title: 'Solutions to possible problems', href: '/selfdeclarations/general/problem-solutions' },
+                  { title: 'Language', href: '/selfdeclarations/general/language' },
+                  { title: 'Security and contingency measures', href: '/selfdeclarations/general/security-and-contingency' },
+                  { title: 'Service management and help desk', href: '/selfdeclarations/general/service-management-and-help-desk' },
+                ],
+              },
+              {
+                title: 'Admin user',
+                links: [
+                  { title: 'Actions', href: '/selfdeclarations/admin-user/actions' },
+                  { title: 'Logging in and out of the software', href: '/selfdeclarations/admin-user/entry-and-exit' },
+                ],
+              },
+              {
+                title: 'Declaring user',
+                links: [
+                  { title: 'Actions', href: '/selfdeclarations/declarant-user/actions' },
+                  { title: 'Logging in and out of the software', href: '/selfdeclarations/declarant-user/entry-and-exit' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        title: 'API',
+        identifier: 'selfdeclarations/api',
+        href: '/selfdeclarations/api',
+        icon: DocumentCode,
+        links: [
+          {
+            title: 'Introduction',
+            links: [{ title: 'Home', href: '/selfdeclarations/api' }],
+          },
+          {
+            title: 'API',
+            links: [
+              { title: 'Botón de Pago - AIO', href: '/selfdeclarations/api/payment-button-AIO' },
+              { title: 'Information Request', href: '/selfdeclarations/api/information-request' },
+              { title: 'Income PDF', href: '/selfdeclarations/api/income-pdf' },
+              { title: 'Empresas - Creación/Actualización', href: '/selfdeclarations/api/companies' },
+              { title: 'Usuarios - Creación/Actualizacion', href: '/selfdeclarations/api/company-bidders' },
             ],
           },
         ],

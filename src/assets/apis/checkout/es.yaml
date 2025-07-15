@@ -1230,7 +1230,7 @@ paths:
                       total: 100
                   instrument:
                     token:
-                      token: e07ca9986cf0ecac8a557fa11c07bf37ea35e9e3e3a4180c49
+                      token: faketoken12f233bd8f5d42138d681bf07ea8295429df07a4af287703e30c891
                   expiration: '2021-12-30T00:00:00-05:00'
                   returnUrl: 'https://dnetix.co/p2p/client'
                   ipAddress: 127.0.0.1
@@ -1252,7 +1252,7 @@ paths:
                   type: checkin
                   instrument:
                     token:
-                      token: e07ca9986cf0ecac8a557fa11c07bf37ea35e9e3e3a4180c49
+                      token: faketoken12f233bd8f5d42138d681bf07ea8295429df07a4af287703e30c891
                   expiration: '2021-12-30T00:00:00-05:00'
                   returnUrl: 'https://dnetix.co/p2p/client'
                   ipAddress: 127.0.0.1
@@ -1274,7 +1274,7 @@ paths:
                   instrument:
                     pocket: 10
                     token:
-                      token: e07ca9986cf0ecac8a557fa11c07bf37ea35e9e3e3a4180c49
+                      token: faketoken12f233bd8f5d42138d681bf07ea8295429df07a4af287703e30c891
                   expiration: '2021-12-30T00:00:00-05:00'
                   returnUrl: 'https://dnetix.co/p2p/client'
                   ipAddress: 127.0.0.1
@@ -1503,42 +1503,9 @@ components:
           type: string
           minLength: 1
           description: Número de teléfono del usuario o empresa
-          example: '+573214445566'
+          example: '+573111111111'
         address:
-          type: object
-          description: | 
-            Estructura para anexar información del domicilio o dirección
-          properties:
-            country:
-              type: string
-              minLength: 1
-              description: País del domicilio
-              example: Colombia
-            state:
-              type: string
-              minLength: 1
-              description: Departamento del domicilio
-              example: Antioquia
-            city:
-              type: string
-              minLength: 1
-              description: Ciudad del domicilio
-              example: Medellín
-            postalCode:
-              type: string
-              minLength: 1
-              description: Código postal del domicilio
-              example: '050012'
-            street:
-              type: string
-              minLength: 1
-              description: Dirección del domicilio
-              example: 'Calle 12 #33a-12, Apto 101'
-            phone:
-              type: string
-              minLength: 1
-              description: Número telefónico del domicilio
-              example: '+573214445566'
+          $ref: '#/components/schemas/Address'
     PaymentRequest:
       title: PaymentRequest
       type: object
@@ -1636,7 +1603,7 @@ components:
               city: Medellín
               state: Poblado
               postalCode: '55555'
-              country: Colombia
+              country: CO
               phone: '+573111111111'
           items:
             - sku: '12345'
@@ -2003,7 +1970,7 @@ components:
         skipResult:
           type: boolean
           description: |
-            Si se envía `true`, cuando el usuario finalice el proceso no se mostrará la página de resultado de sesión, en su lugar será redireccionado al `returnUrl`
+            Si se envía `true`, cuando el usuario finalice el proceso no se mostrará la página de resultado de sesión, en su lugar será redireccionado al `returnUrl`. Ver más en [Omitir resultado](/checkout/skip-result)
           default: false
         noBuyerFill:
           type: boolean
@@ -2019,6 +1986,8 @@ components:
           enum:
             - checkin
           example: checkin
+        metadata:
+          $ref: '#/components/schemas/Metadata'
       x-examples:
         'Crear sesión básica':
           locale: es_CO
@@ -2082,7 +2051,7 @@ components:
               city: Medellín
               state: Poblado
               postalCode: '55555'
-              country: Colombia
+              country: CO
               phone: '+573111111111'
           buyer:
             document: '1122334455'
@@ -2097,7 +2066,7 @@ components:
               city: Medellín
               state: Poblado
               postalCode: '55555'
-              country: Colombia
+              country: CO
               phone: '+573111111111'
           payment:
             reference: '12345'
@@ -2126,7 +2095,7 @@ components:
                 city: Medellín
                 state: Poblado
                 postalCode: '55555'
-                country: Colombia
+                country: CO
                 phone: '+573111111111'
             items:
               - sku: '12345'
@@ -2608,7 +2577,7 @@ components:
                 city: Medellín
                 state: Poblado
                 postalCode: '55555'
-                country: Colombia
+                country: CO
                 phone: '+573111111111'
             buyer:
               document: '1122334455'
@@ -2623,7 +2592,7 @@ components:
                 city: Medellín
                 state: Poblado
                 postalCode: '55555'
-                country: Colombia
+                country: CO
                 phone: '+573111111111'
             payment:
               reference: '12345'
@@ -2652,7 +2621,7 @@ components:
                   city: Medellín
                   state: Poblado
                   postalCode: '55555'
-                  country: Colombia
+                  country: CO
                   phone: '+573111111111'
               items:
                 - sku: '12345'
@@ -2867,8 +2836,8 @@ components:
             EJ: `123`
           example: '123'
       examples:
-        - token: a3bfc8e2afb9ac5583922eccd6d2061c1b0592b099f04e352a894f37ae51cf1a
-          subtoken: '8740257204881112'
+        - token: faketoken12f233bd8f5d42138d681bf07ea8295429df07a4af287703e30c891
+          subtoken: 'fakesubtoken00005'
           installments: null
           cvv: '123'
     CollectRequest:
@@ -2913,6 +2882,11 @@ components:
             Sólo se soporta `checkin` para generar una sesión de preautorización
           enum:
             - checkin
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        provider:
+          type: "string"
+          description: "Código del proveedor de la transacción"
     TransactionActionRequest:
       title: TransactionActionRequest
       type: object
@@ -3472,8 +3446,8 @@ components:
       x-examples: 
         Ejemplo respuesta: 
           value: 
-            token: "e61da2ce4863a45b6491aab2964cd9c97b1d7cd508da2e813b728c88adb5f198"
-            subtoken: "1120437249520005"
+            token: faketoken12f233bd8f5d42138d681bf07ea8295429df07a4af287703e30c891
+            subtoken: 'fakesubtoken00005'
             franchise: "master"
             franchiseName: "Mastercard"
             lastDigits: "0005"
@@ -3481,7 +3455,7 @@ components:
             installments: "3"
         Ejemplo en solicitud: 
           value: 
-            token: "e61da2ce4863a45b6491aab2964cd9c97b1d7cd508da2e813b728c88adb5f198"
+            token: faketoken12f233bd8f5d42138d681bf07ea8295429df07a4af287703e30c891
             cvv: "123"
     ThreeDS: 
       type: "object"
@@ -3607,6 +3581,75 @@ components:
             - "soat"
       required: 
         - "session"
+    Address:
+      title: "address"
+      type: "object"
+      description: Estructura para anexar información del domicilio o dirección
+      properties:
+        country:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: "El país en el que se encuentra la dirección. Código ISO 3166-1 alpha-2."
+          example: CO
+        state:
+          type: string
+          maxLength: 3
+          description: Estado/provincia/departamento. Código ISO 3166-2
+          example: ANT
+        city:
+          type: string
+          minLength: 1
+          description: Ciudad del domicilio
+          example: Medellín
+        postalCode:
+          type: string
+          minLength: 1
+          description: Código postal del domicilio
+          example: '55555'
+        street:
+          type: string
+          minLength: 1
+          description: Dirección del domicilio
+          example: 'Calle 12 #33a-12, Apto 101'
+        phone:
+          type: string
+          minLength: 1
+          description: Número telefónico del domicilio
+          example: '+573111111111'
+    Metadata:
+      title: "metadata"
+      type: "object"
+      description: "Estructura de tipo clave-valor que se utiliza para enviar información adicional y determinar comportamientos específicos durante el procesamiento de una sesión."
+      properties:
+        initiatorIndicator: 
+          type: "string"
+          enum: 
+            - "AGENT"
+            - "CARDHOLDER_COF"
+            - "CARDHOLDER_RECURRING_VARIABLE_AMOUNT"
+            - "CARDHOLDER_RECURRING_FIXED_AMOUNT"
+            - "CARDHOLDER_WITH_INSTALLMENTS"
+            - "MERCHANT_COF"
+            - "MERCHANT_RECURRING_VARIABLE_AMOUNT"
+            - "MERCHANT_RECURRING_FIXED_AMOUNT"
+            - "MERCHANT_WITH_INSTALLMENTS"
+          description: "Indica que la sesión sera procesada por un agente con los datos del tarjetahabiente"
+        EBTDeliveryIndicator: 
+          type: "string"
+          enum: 
+            - 'DIRECT_DELIVERY'
+            - 'CUSTOMER_PICKUP'
+            - 'COMMERCIAL_SHIPPING'
+            - 'OTHER'
+            - 'NOT_AVAILABLE'
+          description: "(Requerido para pagos con EBT): Define el tipo de entrega"
+        openingDate:
+            type: "string"
+            description: "Fecha de creación de la cuenta (formato: 'YYYY-MM-DD'). Requerida para PSE en comercios con categoría “Servicios Financieros."
+        beneficiaryId:
+            type: "string"
+            description: "ID del beneficiario asociado a la cuenta receptora en una transacción PSE. Requerido para comercios con categoría “Servicios Financieros"
   securitySchemes: {}
   responses:
     StatusResponse:
@@ -3807,7 +3850,7 @@ components:
                 locale: en_US
                 instrument:
                   token:
-                    token: a3bfc8e2afb9ac5583922eccd6d2061c1b0592b099f04e352a894f37ae51cf1a
+                    token: faketoken12f233bd8f5d42138d681bf07ea8295429df07a4af287703e30c891
             Using Subtoken:
               value:
                 auth:
@@ -3819,7 +3862,7 @@ components:
                 locale: en_US
                 instrument:
                   token:
-                    subtoken: '8740257204881112'
+                    subtoken: 'fakesubtoken00005'
       description: Instrument Invalidate Request
     GatewayInformationRequest:
       content:
