@@ -88,7 +88,7 @@ const ApiPropertyInformation = ({ title, items }) => {
 const ChildProperties = ({ properties = [], requireds = [] }) => {
   if (properties.length === 0) return null
 
-  return <ApiProperties properties={properties} requireds={requireds} isChild />
+  return <section id="valeria"> <ApiProperties properties={properties} requireds={requireds} isChild/> </section>
 }
 
 const ParentProperty = ({
@@ -228,8 +228,8 @@ const ParentProperty = ({
                   <div
                     className={clsx(
                       'overflow-hidden',
-                      open &&
-                        'rounded-lg border border-zinc-200 dark:border-white/5'
+                      open ?
+                        'rounded-lg border border-zinc-200 dark:border-white/5' : 'hidden'
                     )}
                   >
                     <ChildProperties
