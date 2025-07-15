@@ -3,64 +3,212 @@
 ## Authorization
 An authorization refers to the process that is executed after the user enters the requested information and it is sent to the network to make the payment.
 
+---
+
 ## Recurring payment
 It is a periodic charge made by PlacetoPay for the same value with an interval (daily, monthly, annual) according to the indication given in the request.
 
 To make use of this functionality, in the payment structure of the Recurring Payment it is necessary to send the mandatory data for this structure in the recurring object.
 
-## Pre-authorization
-These types of transactions are used in order to reserve (checkin) an amount of money on a credit card to later debit it (checkout). This amount may change over time (reauthorization) according to the needs of the merchant or changes in the services chosen by the cardholder.
+---
 
-## Check-In
-The CHECKIN type transaction is used to obtain authorization from the bank (provider). This is defined as: Making a debit to a credit/debit card which is used as a guarantee deposit for the use of a good or service.
+# Pre-authorization
 
-![Flujo](/GatewayFlow.png)
+Pre-authorization is a transaction used to reserve (**checkin**) an amount of money on a credit card. This amount can later be debited (**checkout**). During the process, the amount may change (**reauthorization**) according to the merchant’s needs or modifications in the services chosen by the cardholder. 
 
-### Checkin Request
+> For more information about **CHECKIN**, **REAUTHORIZATION** y **CHECKOUT** see [Payments -> preAuthorization](/en/payments/preauthorization)
 
-To allow quick integration by merchants, requests of this type are similar to the one described in the `processTransaction` method with some differences mentioned below:
+Below, we will explore each step in detail to help you integrate preauthorization payments effectively.
 
-- Verify the `action` equal to `checkin`.
-- The payment reference used here will also be used in subsequent REAUTHORIZATION and CHECKOUT.
-- The payment currency used here is also used in subsequent REAUTHORIZATION and CHECKOUT.
-- Dispersion details will not be taken into account in the application. (Multiple transactions to different collectors with the same cardholder information).
-- Recurrence details will not be taken into account in the application. (Recurring charges from a proprietary database).
+## Step 1: Initiate the preauthorization flow (Check-in)
 
-IMPORTANT: Pay special attention to the node: “preAuthorization”, these are the data that will be used in subsequent REAUTHORIZATION and CHECKOUT operations. Additionally, this section shows the general status of the preauthorization process.
+Initiate the pre-authorization by creating a transaction of type `checkin`. This reserves the funds on the customer’s card without charging them.
 
-## Re-Authorization
+Send a `RequestBody` to [API Gateway -> Transaction Processing](/en/gateway/api/reference/transaction#process-request).
 
-> No aplica a Puerto Rico
+* `action` must be `checkin`.
+* Mixed or split payments are not allowed.
+* The currency remains fixed throughout the entire flow.
+* The response will include a `preAuthorization` object with the necessary values for the following steps.
 
-The REAUTHORIZATION type transaction is used to modify the amount defined as a security deposit previously separated with a CHECKIN type transaction. This performs a new authorization (reauthorization) by the bank (provider).
+<CodeGroup title="RequestBody -> Checkin">
 
-### Reauthorization Request
+```json {{ 'title': 'Request ' }}
+{
+    "auth": ...,
+    "action": "checkin",
+    "payment": {
+        "reference": "1234567890",
+        "description": "Testing about checkin",
+        "amount": {
+            "currency": "USD",
+            "total": 10
+        }
+    },
+    ...
+}
+```
 
-It is necessary to first make a CHECKIN request to process a REAUTHORIZATION since:
+```json {{ 'title': 'Response' }}
+{
+    "status": {
+        "status": "APPROVED",
+        "reason": "00",
+        "message": "The request has been successfully approved",
+        "date": "2025-05-02T14:43:57-05:00"
+    },
+    "type": "CHECKIN",
+    ...,
+    "preAuthorization": {
+        "condition": "ACTIVE",
+        "internalReference": 29,
+        "authorization": "736399",
+        "receipt": "110000613613",
+        "amount": {
+            "taxes": [
+                {
+                    "kind": "valueAddedTax",
+                    "amount": 0,
+                    "base": 0
+                }
+            ],
+            "currency": "USD",
+            "total": 10
+        }
+    }
+}
+```
 
-- The payment reference for REAUTHORIZATION cases is overwritten by the original CHECKIN session
-- The payment currency for REAUTHORIZATION cases is overwritten by the original CHECKIN session
-- The data used in the “internalReference” and “authorization” of the request correspond to the data delivered by the CHECKIN response in the “preAuthorization” node
-- It is possible to do n (several) REAUTHORIZATION, of course, all before the CHECKOUT operation
-- Reauthorizations must always be for a value greater than 0
+</CodeGroup>
 
-To highlight that after this operation the pre-authorization process is still in a pending state, this is because it is still waiting for a CHECKOUT operation.
+## Step 2: Adjust the held amount (Reauthorization)
 
-## Check-out
+This optional step allows you to update the held amount before capturing it.
 
-The CHECKOUT type transaction is used to confirm the previously separated security deposit amount with a CHECKIN/REAUTHORIZATION type transaction. This formalizes the transaction (purchase/settlement) at the (supplier).
+This is done by sending a `RequestBody` to [API Gateway -> Transaction Operations](/en/gateway/api/reference/transaction#transaction-request).
 
-### Checkout Request
+* `action` must be `reauthorization`.
+* You must include `internalReference` and `authorization` from the previous step.
+* The currency must match the Check-in.
+* You can perform multiple reauthorizations.
 
-According to this definition, within Evertec these types of transactions:
+<CodeGroup title="RequestBody -> Reauthorization">
 
-- You can do a CHECKOUT without having to do a REAUTHORIZATION
-- The payment reference for CHECKOUT cases is overwritten by the original CHECKIN session
-- The payment currency for CHECKOUT cases is overwritten by the original CHECKIN session
-- The data used in the “internalReference” and “authorization” correspond to the data delivered by the CHECKIN process in the “preAuthorization” node
-- If the CHECKOUT value is 0, the pre-authorization is canceled and the amount retained in previous requests is released
+```json {{ 'title': 'Request' }}
+{
+    "auth": ...,
+    "internalReference": 30,
+    "authorization": "235263",
+    "action": "reauthorization",
+    "payment": {
+        "reference": "1234567890",
+        "description": "Testing about reauthorization",
+        "amount": {
+            "currency": "USD",
+            "total": 15
+        }
+    },
+    ...
+}
+```
 
-IMPORTANT: Note that the "status", "authorization" and "receipt" of the "preAuthorization" node change during a successful CHECKOUT, so, in REVERSE requests, these new values ​​must be used in the request.
+```json {{ 'title': 'Response' }}
+{
+    "status": {
+        "status": "APPROVED",
+        "reason": "00",
+        "message": "The request has been successfully approved",
+        "date": "2025-05-02T14:43:57-05:00"
+    },
+    "type": "REAUTHORIZATION",
+    ...,
+    "preAuthorization": {
+        "condition": "ACTIVE",
+        "internalReference": 30,
+        "authorization": "235263",
+        "receipt": "110000613613",
+        "amount": {
+            "taxes": [
+                {
+                    "kind": "valueAddedTax",
+                    "amount": 0,
+                    "base": 0
+                }
+            ],
+            "currency": "USD",
+            "total": 15
+        }
+    }
+}
+```
+
+</CodeGroup>
+
+## Step 3: Finalize the transaction (Checkout)
+
+This step captures or releases the held amount.
+
+This is done by sending the `RequestBody` to the [API Gateway -> Transaction Operations](/en/gateway/api/reference/transaction#transaction-request).
+
+* `action` must be `checkout`.
+* If `amount.total` is `0`, the hold is released.
+* You must include `internalReference` and `authorization` from the last step.
+
+<CodeGroup title="RequestBody -> Checkout">
+
+```json {{ 'title': 'Request' }}
+{
+    "auth": ...,
+    "internalReference": 30,
+    "authorization": "235263",
+    "action": "checkout",
+    "payment": {
+        "reference": "1234567890",
+        "description": "Testing about checkout",
+        "amount": {
+            "currency": "USD",
+            "total": 20
+        }
+    },
+  ...
+}
+```
+
+```json {{ 'title': 'Response' }}
+{
+    "status": {
+        "status": "APPROVED",
+        "reason": "00",
+        "message": "The request has been successfully approved",
+        "date": "2025-05-02T14:43:57-05:00"
+    },
+    "type": "CHECKOUT",
+    ...,
+    "preAuthorization": {
+        "condition": "COMPLETED",
+        "internalReference": 31,
+        "authorization": "235263",
+        "receipt": "110000142265",
+        "amount": {
+            "taxes": [
+                {
+                    "kind": "valueAddedTax",
+                    "amount": 0,
+                    "base": 0
+                }
+            ],
+            "currency": "USD",
+            "total": 20
+        }
+    }
+}
+```
+
+</CodeGroup>
+
+With this three-step process, you can safely and effectively handle preauthorized payments using the Gateway API. Always ensure the `internalReference`, `authorization`, and `reference` values are consistent across all steps to avoid transaction errors.
+
+---
 
 ## Dispersion
 

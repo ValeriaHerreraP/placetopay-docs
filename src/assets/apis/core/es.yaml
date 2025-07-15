@@ -32,6 +32,8 @@ tags:
     description: Acciones sobre la administración de usuarios.
   - name: Acciones sobre planes
     description: Acciones sobre la administración de planes.
+  - name: Acciones sobre facturas
+    description: Acciones sobre la administración de facturas.
 paths:
   "/core/merchant/create":
     post:
@@ -1961,6 +1963,20 @@ paths:
                         allowPartial:
                           type: boolean
                           description: Indicador de pago parcial.
+                        allowWallet:
+                          type: boolean
+                          description: Indicador de pago con billetera Placetopay.
+                        checkoutAttemptsLimit:
+                          type: integer
+                          enum:
+                            - null
+                            - 1
+                            - 3
+                            - 5
+                            - 10
+                            - 20
+                          example: null
+                          description: Define la cantidad máxima de intentos de pago o tokenización en una misma sesión de Web Checkout. Por defecto se usa la configuración del sistema.
                         connectionMethod:
                           type: string
                           enum:
@@ -1994,12 +2010,34 @@ paths:
                           description: Código Analytics o Tag Manager.
                         sourceRestriction:
                           type: string
-                          description: |
-                            Restricción de Origen.
-
-                            Valores Permitidos: `microsites` `ivr` `checkout` `panel` `api` `plugins`
+                          description: Restricción de Origen.
+                          enum:
+                            - microsites
+                            - ivr
+                            - checkout
+                            - panel
+                            - api
+                            - plugins
                           nullable: true
                           example: microsites
+                        payerFieldsType:
+                          type: integer
+                          description: |
+                            Tipos del campo de pagador:
+                            
+                            
+                            0 = Con documento
+                            
+                            1 = Sin documento
+                            
+                            2 = Solo email
+                          enum:
+                            - 0
+                            - 1
+                            - 2
+                        returnAdditional:
+                          type: boolean
+                          description: Permite devolver o no los datos adicionales
                     control:
                       type: object
                       x-stoplight:
@@ -2630,6 +2668,8 @@ paths:
                     onTest: true
                     integration:
                       allowPartial: true
+                      allowWallet: true
+                      checkoutAttemptsLimit: null
                       connectionMethod: REDIRECT
                       notificationUrl: www.urlexample.com
                       checkoutVersion: v4
@@ -2891,6 +2931,20 @@ paths:
                         allowPartial:
                           type: boolean
                           description: Indicador de pago parcial.
+                        allowWallet:
+                          type: boolean
+                          description: Indicador de pago con billetera Placetopay.
+                        checkoutAttemptsLimit:
+                          type: integer
+                          enum:
+                            - null
+                            - 1
+                            - 3
+                            - 5
+                            - 10
+                            - 20
+                          example: null
+                          description: Define la cantidad máxima de intentos de pago o tokenización en una misma sesión de Web Checkout. Por defecto se usa la configuración del sistema.
                         connectionMethod:
                           type: string
                           enum:
@@ -2924,12 +2978,34 @@ paths:
                           description: Código Analytics o Tag Manager.
                         sourceRestriction:
                           type: string
-                          description: |
-                            Restricción de Origen.
-
-                            Valores Permitidos: `microsites` `ivr` `checkout` `panel` `api` `plugins`
+                          description: Restricción de Origen.
+                          enum:
+                            - microsites
+                            - ivr
+                            - checkout
+                            - panel
+                            - api
+                            - plugins
                           nullable: true
                           example: microsites
+                        payerFieldsType:
+                          type: integer
+                          description: |
+                            Tipos del campo de pagador:
+
+
+                            0 = Con documento
+
+                            1 = Sin documento
+
+                            2 = Solo email
+                          enum:
+                            - 0
+                            - 1
+                            - 2
+                        returnAdditional:
+                          type: boolean
+                          description: Permite devolver o no los datos adicionales
                     control:
                       type: object
                       x-stoplight:
@@ -3592,6 +3668,8 @@ paths:
                     productionDate: 2024-02-02
                     integration:
                       allowPartial: true
+                      allowWallet: true
+                      checkoutAttemptsLimit: null
                       connectionMethod: REDIRECT
                       notificationUrl: www.urlexample.com
                       checkoutVersion: v4
@@ -3634,7 +3712,279 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/Site"
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Identificador del sitio
+                    example: 1
+                  name:
+                    type: string
+                    description: Nombre del sitio
+                    example: Site CO
+                  displayName:
+                    type: srting
+                    description: Nombre a mostrar del sitio
+                    example: Site display Name
+                  document:
+                    type: string
+                    description: Documento del comercio
+                    example: 123596822
+                  documentType:
+                    type: string
+                    description: Tipo de documento del comercio
+                    example: CC
+                  merchant:
+                    type: string
+                    description: Nombre del comercio
+                    example: Customer CO
+                  merchantBrand:
+                    type: string
+                    description: Marca del comercio
+                    example: Customer brand CO
+                  email:
+                    type: string
+                    description: Correo electrónico del sitio
+                  supportEmail:
+                    type: string
+                    description: Correo electrónico de soporte del sitio
+                  allowedIP:
+                    type: string
+                    description: Ips autorizadas para ingresar al sistema
+                    example: '127.0.0.1'
+                  allowPartial:
+                    type: boolean
+                    description: Indica si el comercio permite pago parcial
+                    example: false
+                  allowMulticredit:
+                    type: boolean
+                    description: Indica si es permitido realizar pagos a diferentes destinos, solo para medio de pago PSE
+                  state:
+                    type: string
+                    description: Indica si el sitio se encuentra ACTIVO o INACTIVO
+                    example: ACTIVE
+                  currency:
+                    type: string
+                    description: Moneda del sitio
+                    example: COP
+                  country:
+                    type: string
+                    description: País del comercio
+                    example: CO
+                  locale:
+                    type: string
+                    description: Lenguaje seleccionado para el sitio
+                    example: 'EN'
+                  locales:
+                    type: array
+                    description: Lenguajes soportados por el comercio
+                    example: ['EN', 'ES']
+                  expireOn:
+                    type: string
+                    description: Fecha de expiración del sitio
+                    example: '2030-05-19 17:59:55'
+                  logoUrl:
+                    type: string
+                    description: Url de logo del sitio
+                  cssUrl:
+                    type: string
+                    description: Url del archivo de estilos
+                  analyticsCode:
+                    type: string
+                    description: Código de Google Analytics o Tag Manager, si son ambos, se separan por coma ','.
+                    example: 'UA-171315311-4, GTM-123422'
+                  notificationUrl:
+                    type: string
+                    description: Url para notificación de cambios en transacciones en peticiones por redirección
+                  inlineJs:
+                    type: string
+                    description: Código HTML añadido a las páginas de redirección
+                  allowedCurrencies:
+                    type: array
+                    description: Monedas soportadas por el comercio
+                    example: ['COP', 'USD', 'CRC']
+                  kount:
+                    type: object
+                    description: Contiene información de la integración con Kount
+                    properties:
+                      apiKey:
+                        type: string
+                        description: Llave de la integración
+                        example: 'fakeAPIKey'
+                      sandbox:
+                        type: boolean
+                        description: Indica si el sitio está en pruebas
+                      website:
+                        type: string
+                        description: Categoría o actividad con la que viajará la información a kount
+                        example: DEFAULT
+                      merchant:
+                        type: string
+                        description: Código de la pasarela para identificarse en Kount
+                  md5Hash:
+                    type: string
+                    description: Algoritmo de enmascaramiento de datos
+                  onboardingToken:
+                    type: string
+                    description: Token de acceso para el sistema onBoarding
+                    example: 'FakeToken_cS44IiK58uganjnor5ksl3anjdc5sdas4fcavsn4xas8qD4TCbE5J1jIr'
+                  credentials:
+                    type: object
+                    properties:
+                      login:
+                        type: string
+                        description: Login del sitio
+                        example: 'fake_login_942f5d58306357c8f6272'
+                      tranKey:
+                        type: string
+                        description: Llave transaccional del sitio
+                        example: 'fake_traneky_zgo6HQRp'
+                      expireOn:
+                        type: string
+                        description: Fecha de expiración del sitio
+                    description: Objeto que contiene información de credenciales del sitio
+                  integrations:
+                    type: array
+                    items:
+                      type: object
+                      description: Estructura de la integración.
+                    description: Arreglo que contiene las integraciones del sitio, su estructura depende del tipo de integración
+                  payerFields:
+                    type: array
+                    description: Arreglo que contiene información de los tipos de campos del pagador
+                  allowWallet:
+                    type: boolean
+                    description: Indicador de pago con Billetera Placetopay
+                    example: false
+                  timezone:
+                    type: string
+                    description: Zona horaria configurada para el sitio
+                  services:
+                    type: array
+                    description: Contiene informacion de los medios de pago asociados al sitio
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código del medio de pago
+                        priority:
+                          type: integer
+                          description: Indica la prioridad para operar con el medio de pago
+                        minPayment:
+                          type: string
+                          description: Monto mínimo permitido en una transacción
+                        maxPayment:
+                          type: string
+                          description: Monto máximo permitido en una transacción
+                        accountNumber:
+                          type: numeric
+                          description: Número de cuenta o tarjeta
+                        accountType:
+                          type: string
+                          description: Indica el tipo de cuenta
+                        bankName:
+                          type: string
+                          description: Nombre de entidad financiera
+                        bankCode:
+                          type: int
+                          description: Código de la entidad financiera
+                        settings:
+                          type: array
+                          description: Contiene las configuraciones del medio de pago
+                        promotions:
+                          type: array
+                          description: Arreglo que contiene las promociones asociadas al medio de pago
+                        allowedOperations:
+                          type: array
+                          description: Indica las operacioes soportadas por el medio de pago
+                    example:
+                  transactionModifiers:
+                    type: array
+                    description: Contiene informaciń acerca de modificadores de transacción
+                  compensationMethod:
+                    type: string
+                    description: Indica método de compensación
+                    example: 'CORPORATE_CARD'
+                  checkoutVersion:
+                    type: string
+                    description: versión de redirección
+                    example: v4
+                  branding:
+                    type: object
+                    description: Contiene la configuración sobre la gestión de marca del sitio
+                    properties:
+                      buttonColor:
+                        type: string
+                        description: Código de color en hexadecimal para el boton
+                        example: '#000000'
+                      sidebarColor:
+                        type: string
+                        description: Código de color en headecimal para bara lateral
+                        example: '#ffebeb'
+                    example:
+                  openLinks:
+                    type: object
+                    description: Contiene la información relacionada con los alias del sitio
+                    properties:
+                      id:
+                        type: integer
+                        description: Identificador del alias del sitio
+                        example: 1
+                      alias:
+                        type: string
+                        description: Nombre del alias del sitio
+                        example: 'Site Alias 1'
+                      description:
+                        type: string
+                        description: Descripción del alias del sitio
+                        example: 'Alias description 1'
+                      email:
+                        type: string
+                        description: Correo electrónico del sitio
+                  promotions:
+                    type: array
+                    description: Contiene información acerca de las promociones activas para el sitio
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código de la promoción
+                          example: '1234'
+                        description:
+                          type: string
+                          description: Descripción de la promoción
+                        type:
+                          type: string
+                          description: Indica si la promoción esta asociada al comercio o franquicia
+                          example: MERCHANT
+                        startDate:
+                          type: string
+                          description: Fecha de inicio de la promoción
+                          example: '2025-06-02'
+                        endDate:
+                          type: string
+                          description: Fecha de finalización de la promoción
+                          example: '2026-06-02'
+                        condition:
+                          type: array
+                          description: Contiene las condiciones para aplicar la promoción
+                        discountBase:
+                          type: string
+                          description: Base del descuento
+                          example: 200000
+                        discountVariable:
+                          type: string
+                          description: Porcentaje de descuento variable
+                          example: 20
+                        maxDiscount:
+                          type: string
+                          description: Monto máximo de descuento
+                        franchise:
+                          type: string
+                          description: Código del medio de pago para el descuento
+                          example: 'ID_VS'
               examples:
                 Respuesta exitosa:
                   value:
@@ -3679,6 +4029,7 @@ paths:
                       - document
                       - documentType
                     allowWallet: true
+                    checkoutAttemptsLimit: null
                     timezone: America/Bogota
                     services:
                       - code: BTNAV
@@ -3699,6 +4050,7 @@ paths:
                       buttonColor: "#000000"
                       sidebarColor: "#ffebeb"
                     openLinks: []
+                    promotions: []
         "400":
           description: Bad Request
           content:
@@ -4043,6 +4395,8 @@ paths:
                         productionDate: "2024-01-01"
                         integration:
                           allowPartial: true
+                          allowWallet: true
+                          checkoutAttemptsLimit: null
                           connectionMethod: REDIRECT
                           notificationUrl: www.urlexample.com
                           checkoutVersion: v4
@@ -7112,7 +7466,7 @@ paths:
         "Este servicio permite consultar los grupos existentes.\nSi la
         respuesta es exitosa, se retorna un arreglo  con el identificador, nombre
         y descripción del grupo. Se puede filtrar por medio de los parámetros: identificador
-        y nombre del grupo.\n\n> ### Nota \n>\n> *No es requerido ingresar todos los
+        y código del grupo.\n\n> ### Nota \n>\n> *No es requerido ingresar todos los
         parámetros para el filtro.*"
       responses:
         "200":
@@ -7199,9 +7553,9 @@ paths:
                   type: integer
                   description: Identificador del grupo
                   example: 1
-                name:
+                code:
                   type: string
-                  description: Nombre del grupo
+                  description: Código del grupo
                   example: GROUP_ROOT
                 pagination:
                   type: object
@@ -9568,6 +9922,825 @@ paths:
       tags:
         - Acciones sobre planes
     parameters: []
+  "/core/invoice/create":
+    post:
+      summary: Crear facturas
+      operationId: post-core-invoice-create
+      description: Este servicio permite crear multiples facturas. Si una factura es creada con la misma referencia de una factura ya existente, la misma será sustituida si no está paga.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+                  count:
+                    type: integer
+                    example: 1
+                    description: Cantidad de facturas creadas.
+              examples:
+                Respuesta exitosa:
+                  value:
+                    status:
+                      status: OK
+                      reason: "00"
+                      message: La petición se ha procesado correctamente.
+                      date: "2021-09-21T09:34:48-05:00"
+                    count: 1
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Respuesta fallida:
+                  value:
+                    Status:
+                      status: FAILED
+                      reason: BR
+                      message: El campo siteId es obligatorio cuando site no está presente.
+                      date: "2021-09-21T09:34:48-05:00"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Auntenticación fallida:
+                  value:
+                    status:
+                      status: FAILED
+                      reason: "401"
+                      message:
+                        la autenticación no contiene todos los parámetros requeridos
+                        (login, tranKey, seed, nonce)
+                      date: "2021-09-21T09:34:48-05:00"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auth:
+                  "$ref": "#/components/schemas/Autentication"
+                site:
+                  type: integer
+                  example: 1
+                  description: Id del sitio al cual se le asociará la factura. Requerido si no se envía el siteId en cada una de las facturas.
+                invoices:
+                  type: array
+                  description: Información de las facturas a crear.
+                  "$ref": "#/components/schemas/Invoice-create"
+              required:
+                - auth
+                - site
+                - invoices
+            examples:
+              Creación de facturas:
+                value:
+                  auth:
+                    login: 613822f45568191a8cdf4ad2299f6d23
+                    tranKey: bHehjzNcMQVQ1zto0GhmZxjeMhwA+3OlFPbOup16HGc=
+                    nonce: NjE1MWQ4MDE5YWViMw==
+                    seed: "2021-09-27T09:41:05-05:00"
+                  "site": 3,
+                  "invoices": [
+                    {
+                      "payment": {
+                        "reference": "REFERENCE",
+                        "description": "DESCRIPTION",
+                        "amount": {
+                          "currency": "USD",
+                          "total": 5
+                        }
+                      },
+                      "altReference": "ALT_REFERENCE",
+                      "debtor": {
+                        "document": "1234567890",
+                        "documentType": "CC"
+                      },
+                      "expiration": "2026-07-25 10:14:24",
+                      "date": "2019-07-07",
+                      "dueDate": "2026-03-25 10:14:24",
+                      "secondDueDate": "2026-06-27 10:14:24",
+                      "serviceCode": "1234"
+                    }
+                  ]
+      tags:
+        - Acciones sobre facturas
+    parameters: []
+  "/core/invoice/remove":
+    post:
+      summary: Eliminar una factura
+      operationId: post-core-invoice-remove
+      description: Este servicio permite eliminar una factura.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+                  data:
+                    type: object
+                    description: Objeto con la información de la factura eliminada.
+                    "$ref": "#/components/schemas/Invoice"
+              examples:
+                Respuesta exitosa:
+                  value:
+                    status:
+                      status: OK
+                      reason: "00"
+                      message: La petición se ha procesado correctamente.
+                      date: "2021-09-21T09:34:48-05:00"
+                    data: {
+                      id: 33,
+                      status: "ACTIVE",
+                      serviceCode: "1234",
+                      debtor: {
+                        document: "1234567890",
+                        documentType: "CC",
+                        name: "NAME"
+                      },
+                      payment: {
+                        reference: "REFERENCE",
+                        description: "DESCRIPTION",
+                        amount: [
+                          taxes: {
+                            kind": "valueAddedTax",
+                            amount: 0,
+                            base: 0
+                          },
+                          details: [
+                            {
+                              kind": "subtotal",
+                              amount": 2.22
+                            }
+                          ],
+                          currency: "USD",
+                          total: 2.22
+                        ],
+                        allowPartial: false,
+                        subscribe: false
+                      },
+                      altReference: "ALT_REFERENCE",
+                      createdAt: "2021-03-25",
+                      expirationDate: "2025-02-25 10:14:24",
+                      finalDate: "2025-02-25 23:59:59",
+                      siteId: 3
+                    }
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Respuesta fallida:
+                  value:
+                    Status:
+                      status: FAILED
+                      reason: BR
+                      message: El campo site es obligatorio.
+                      date: "2021-09-21T09:34:48-05:00"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Auntenticación fallida:
+                  value:
+                    status:
+                      status: FAILED
+                      reason: "401"
+                      message:
+                        la autenticación no contiene todos los parámetros requeridos
+                        (login, tranKey, seed, nonce)
+                      date: "2021-09-21T09:34:48-05:00"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auth:
+                  "$ref": "#/components/schemas/Autentication"
+                site:
+                  type: integer
+                  example: 1
+                  description: Id del sitio al cual pertenece la factura.
+                invoice:
+                  type: integer
+                  example: 1
+                  description: Número de identificación de la factura a eliminar.
+              required:
+                - auth
+                - site
+                - invoice
+            examples:
+              Eliminación de una factura:
+                value:
+                  auth:
+                    login: 613822f45568191a8cdf4ad2299f6d23
+                    tranKey: bHehjzNcMQVQ1zto0GhmZxjeMhwA+3OlFPbOup16HGc=
+                    nonce: NjE1MWQ4MDE5YWViMw==
+                    seed: "2021-09-27T09:41:05-05:00"
+                  site: 1
+                  invoice: 1
+      tags:
+        - Acciones sobre facturas
+    parameters: []
+  "/core/invoice/hold":
+    post:
+      summary: Bloquear o liberar una factura
+      operationId: post-core-invoice-hold
+      description: Este servicio permite realizar el bloqueo o la liberación de una factura.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+                  data:
+                    type: object
+                    description: Objeto con la información de la factura a bloquear o liberar.
+                    "$ref": "#/components/schemas/Invoice"
+              examples:
+                Respuesta exitosa:
+                  value:
+                    status:
+                      status: OK
+                      reason: "00"
+                      message: La petición se ha procesado correctamente.
+                      date: "2021-09-21T09:34:48-05:00"
+                    data: {
+                      id: 33,
+                      status: "HOLD",
+                      serviceCode: "1234",
+                      debtor: {
+                        document: "1234567890",
+                        documentType: "CC",
+                        name: "NAME"
+                      },
+                      payment: {
+                        reference: "REFERENCE",
+                        description: "DESCRIPTION",
+                        amount: [
+                          taxes: {
+                            kind": "valueAddedTax",
+                            amount: 0,
+                            base: 0
+                          },
+                          details: [
+                            {
+                              kind": "subtotal",
+                              amount": 2.22
+                            }
+                          ],
+                          currency: "USD",
+                          total: 2.22
+                        ],
+                        allowPartial: false,
+                        subscribe: false
+                      },
+                      altReference: "ALT_REFERENCE",
+                      createdAt: "2021-03-25",
+                      expirationDate: "2025-02-25 10:14:24",
+                      finalDate: "2025-02-25 23:59:59",
+                      siteId: 3
+                    }
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Respuesta fallida:
+                  value:
+                    Status:
+                      status: FAILED
+                      reason: BR
+                      message: El campo invoice es obligatorio.
+                      date: "2021-09-21T09:34:48-05:00"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Auntenticación fallida:
+                  value:
+                    status:
+                      status: FAILED
+                      reason: "401"
+                      message:
+                        la autenticación no contiene todos los parámetros requeridos
+                        (login, tranKey, seed, nonce)
+                      date: "2021-09-21T09:34:48-05:00"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auth:
+                  "$ref": "#/components/schemas/Autentication"
+                site:
+                  type: integer
+                  example: 1
+                  description: Id del sitio al cual pertenece la factura.
+                invoice:
+                  type: integer
+                  example: 1
+                  description: Número de identificación de la factura.
+                revoke:
+                  type: boolean
+                  example: true
+                  default: false
+                  description: Si el valor es "false" la factura será bloqueada, si es "true" la factura será liberada.
+              required:
+                - auth
+                - invoice
+            examples:
+              Bloqueo o liberación de una factura:
+                value:
+                  auth:
+                    login: 613822f45568191a8cdf4ad2299f6d23
+                    tranKey: bHehjzNcMQVQ1zto0GhmZxjeMhwA+3OlFPbOup16HGc=
+                    nonce: NjE1MWQ4MDE5YWViMw==
+                    seed: "2021-09-27T09:41:05-05:00"
+                  site: 1
+                  invoice: 1
+                  revoke: true
+      tags:
+        - Acciones sobre facturas
+    parameters: []
+  "/core/invoice/flush":
+    post:
+      summary: Eliminar facturas vencidas
+      operationId: post-core-invoice-flush
+      description: Este servicio permite eliminar todas las facturas del sitio que estén expiradas y no estén pagas o bloqueadas.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Respuesta exitosa:
+                  value:
+                    status:
+                      status: OK
+                      reason: "00"
+                      message: La petición se ha procesado correctamente.
+                      date: "2021-09-21T09:34:48-05:00"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Respuesta fallida:
+                  value:
+                    Status:
+                      status: FAILED
+                      reason: BR
+                      message: El campo site es obligatorio.
+                      date: "2021-09-21T09:34:48-05:00"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Auntenticación fallida:
+                  value:
+                    status:
+                      status: FAILED
+                      reason: "401"
+                      message:
+                        la autenticación no contiene todos los parámetros requeridos
+                        (login, tranKey, seed, nonce)
+                      date: "2021-09-21T09:34:48-05:00"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auth:
+                  "$ref": "#/components/schemas/Autentication"
+                site:
+                  type: integer
+                  example: 1
+                  description: Id del sitio al cual pertenece la factura.
+              required:
+                - auth
+                - site
+            examples:
+              Eliminar facturas vencidas:
+                value:
+                  auth:
+                    login: 613822f45568191a8cdf4ad2299f6d23
+                    tranKey: bHehjzNcMQVQ1zto0GhmZxjeMhwA+3OlFPbOup16HGc=
+                    nonce: NjE1MWQ4MDE5YWViMw==
+                    seed: "2021-09-27T09:41:05-05:00"
+                  site: 1
+      tags:
+        - Acciones sobre facturas
+    parameters: []
+  "/core/invoice/settle":
+    post:
+      summary: Marcar factura como pagada
+      operationId: post-core-invoice-settle
+      description: Este servicio permite marcar una factura como pagada. Esto significa que se han recibido los pagos correspondientes y la factura se ha cerrado.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+                  data:
+                    type: object
+                    description: Objeto con la información de la factura.
+                    "$ref": "#/components/schemas/Invoice"
+              examples:
+                Respuesta exitosa:
+                  value:
+                    status:
+                      status: OK
+                      reason: "00"
+                      message: La petición se ha procesado correctamente.
+                      date: "2021-09-21T09:34:48-05:00"
+                    data: {
+                      id: 33,
+                      status: "PAYED",
+                      serviceCode: "1234",
+                      debtor: {
+                        document: "1234567890",
+                        documentType: "CC",
+                        name: "NAME"
+                      },
+                      payment: {
+                        reference: "REFERENCE",
+                        description: "DESCRIPTION",
+                        amount: [
+                          taxes: {
+                            kind": "valueAddedTax",
+                            amount: 0,
+                            base: 0
+                          },
+                          details: [
+                            {
+                              kind": "subtotal",
+                              amount": 2.22
+                            }
+                          ],
+                          currency: "USD",
+                          total: 2.22
+                        ],
+                        allowPartial: false,
+                        subscribe: false
+                      },
+                      altReference: "ALT_REFERENCE",
+                      createdAt: "2021-03-25",
+                      expirationDate: "2025-02-25 10:14:24",
+                      finalDate: "2025-02-25 23:59:59",
+                      siteId: 3,
+                      settlement: {
+                        authorization: "00000",
+                        receipt: "12345",
+                        bankName: null,
+                        amount: 2,
+                        paymentDate: "2025-02-17 10:46:49"
+                      }
+                    }
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Respuesta fallida:
+                  value:
+                    Status:
+                      status: FAILED
+                      reason: BR
+                      message: El campo site es obligatorio.
+                      date: "2021-09-21T09:34:48-05:00"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Auntenticación fallida:
+                  value:
+                    status:
+                      status: FAILED
+                      reason: "401"
+                      message:
+                        la autenticación no contiene todos los parámetros requeridos
+                        (login, tranKey, seed, nonce)
+                      date: "2021-09-21T09:34:48-05:00"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auth:
+                  "$ref": "#/components/schemas/Autentication"
+                site:
+                  type: integer
+                  example: 1
+                  description: Id del sitio al cual pertenece la factura.
+                invoice:
+                  type: integer
+                  example: 1
+                  description: Número de identificación de la factura.
+                amount:
+                  type: number
+                  description: Monto total de la factura.
+                  format: decimal
+                  minimum: 0
+                authorization:
+                  type: alpha_dash
+                  description: Código de autorización del pago.
+                  maxLength: 40
+                receipt:
+                  type: alpha_num
+                  description: Recibo del pago.
+                  maxLength: 16
+                bankName:
+                  type: string
+                  description: Nombre del banco.
+                  maxLength: 80
+              required:
+                - auth
+                - site
+                - invoice
+                - amount
+                - authorization
+                - receipt
+            examples:
+              Marcar factura como pagada:
+                value:
+                  auth:
+                    login: 613822f45568191a8cdf4ad2299f6d23
+                    tranKey: bHehjzNcMQVQ1zto0GhmZxjeMhwA+3OlFPbOup16HGc=
+                    nonce: NjE1MWQ4MDE5YWViMw==
+                    seed: "2021-09-27T09:41:05-05:00"
+                  site: 1
+                  invoice: 42
+                  amount: 200
+                  authorization: "00000"
+                  receipt: "12345"
+      tags:
+        - Acciones sobre facturas
+    parameters: []
+  "/core/invoice/search":
+    post:
+      summary: Consulta de facturas.
+      operationId: post-core-invoice-search
+      description: Este servicio permite consultar la información completa de las facturas.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+                  data:
+                    type: object
+                    description: Objeto con la información de las facturas.
+                    items:
+                      "$ref": "#/components/schemas/Invoice"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+              examples:
+                Respuesta exitosa:
+                  value:
+                    status:
+                      status: OK
+                      reason: "00"
+                      message: La petición se ha procesado correctamente.
+                      date: "2021-09-21T09:34:48-05:00"
+                    data: [{
+                      id: 33,
+                      status: "PAYED",
+                      serviceCode: "1234",
+                      debtor: {
+                        document: "1234567890",
+                        documentType: "CC",
+                        name: "NAME"
+                      },
+                      payment: {
+                        reference: "REFERENCE",
+                        description: "DESCRIPTION",
+                        amount: [
+                          taxes: {
+                            kind": "valueAddedTax",
+                            amount: 0,
+                            base: 0
+                          },
+                          details: [
+                            {
+                              kind": "subtotal",
+                              amount": 2.22
+                            }
+                          ],
+                          currency: "USD",
+                          total: 2.22
+                        ],
+                        allowPartial: false,
+                        subscribe: false
+                      },
+                      altReference: "ALT_REFERENCE",
+                      createdAt: "2021-03-25",
+                      expirationDate: "2025-02-25 10:14:24",
+                      finalDate: "2025-02-25 23:59:59",
+                      siteId: 4,
+                      settlement: {
+                        authorization: "00000",
+                        receipt: "12345",
+                        bankName: null,
+                        amount: 2,
+                        paymentDate: "2025-02-17 10:46:49"
+                      }
+                    }]
+                    "pagination": {
+                      "total": 2,
+                      "perPage": 1,
+                      "currentPage": 2,
+                      "lastPage": 2
+                    }
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Respuesta fallida:
+                  value:
+                    Status:
+                      status: FAILED
+                      reason: BR
+                      message: El campo site es obligatorio.
+                      date: "2021-09-21T09:34:48-05:00"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    "$ref": "#/components/schemas/Status"
+              examples:
+                Auntenticación fallida:
+                  value:
+                    status:
+                      status: FAILED
+                      reason: "401"
+                      message:
+                        la autenticación no contiene todos los parámetros requeridos
+                        (login, tranKey, seed, nonce)
+                      date: "2021-09-21T09:34:48-05:00"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auth:
+                  "$ref": "#/components/schemas/Autentication"
+                site:
+                  type: integer
+                  example: 1
+                  description: Id del sitio al cual pertenecen las facturas.
+                reference:
+                  type: string
+                  description: Referencia de la factura.
+                altReference:
+                  type: string
+                  description: Referencia alterna de la factura.
+                document:
+                  type: string
+                  description: Número del documento del deudor de la factura. No incluye el tipo de documento.
+                status:
+                  type: array
+                  description: Arreglo de estados por los que se desea realizar la busqueda.
+                  enum:
+                    - ACTIVE
+                    - PAYED
+                    - EXPIRED
+                    - HOLD
+                orderByCreatedDate:
+                  type: string
+                  description: Indica el orden de listado por creación ya sea de manera ascendente o descendente.
+                  enum:
+                    - asc
+                    - desc
+                pagination:
+                  type: object
+                  description: Objeto que contiene los parámetros de paginación
+                  properties:
+                    perPage:
+                      type: integer
+                      default: 15
+                      example: 10
+                      minimum: 1
+                      description: Cantidad de registros por página
+                    currentPage:
+                      type: integer
+                      example: 1
+                      minimum: 1
+                      description: Página actual
+              required:
+                - auth
+                - site
+            examples:
+              Marcar factura como pagada:
+                value:
+                  auth:
+                    login: 613822f45568191a8cdf4ad2299f6d23
+                    tranKey: bHehjzNcMQVQ1zto0GhmZxjeMhwA+3OlFPbOup16HGc=
+                    nonce: NjE1MWQ4MDE5YWViMw==
+                    seed: "2021-09-27T09:41:05-05:00"
+                  site: 4
+                  status: ["PAYED", "ACTIVE"]
+                  pagination:
+                    perPage: 1
+                    currentPage: 2
+      tags:
+        - Acciones sobre facturas
+    parameters: []
 components:
   schemas:
     Person:
@@ -11001,6 +12174,20 @@ components:
             allowPartial:
               type: boolean
               description: Indicador de pago parcial.
+            allowWallet:
+              type: boolean
+              description: Indicador de pago con billetera Placetopay.
+            checkoutAttemptsLimit:
+              type: integer
+              enum:
+                - null
+                - 1
+                - 3
+                - 5
+                - 10
+                - 20
+              example: null
+              description: Define la cantidad máxima de intentos de pago o tokenización en una misma sesión de Web Checkout. Por defecto se usa la configuración del sistema.
             connectionMethod:
               type: string
               enum:
@@ -12368,6 +13555,310 @@ components:
             id: 3185185y0s0xt
           default: false
           description: Determina si es modelo agregador (_PSE_)
+    Invoice-create:
+      title: Invoice create
+      type: object
+      description: Estructura que contiene la información para crear una factura.
+      x-examples:
+      properties:
+        payment:
+          type: object
+          description: Información sobre el pago de la factura.
+          properties:
+            reference:
+              type: string
+              description: Referencia de la factura.
+              minLength: 1
+              maxLength: 30
+            description:
+              type: string
+              description: Descripción del pago.
+              maxLength: 255
+            amount:
+              type: object
+              description: Estructura que contiene la información sobre el valor de la factura.
+              properties:
+                total:
+                    type: number
+                    description: Monto total de la factura.
+                    format: decimal
+                    maximum: 9999999999.99
+                currency:
+                  type: string
+                  description: Moneda acorde al ISO 4217 (alphabetic code).
+                  maxLength: 3
+                  example: COP
+                taxes:
+                  type: object
+                  description: Estructura que contiene la información sobre impuestos de la factura.
+                  properties:
+                    kind:
+                      type: string
+                      description: Tipo de clasificación de impuesto.
+                    amount:
+                      type: number
+                      description: Valor del impuesto.
+                      format: decimal
+                    base:
+                      type: number
+                      description: Valor base para calcular el impuesto.
+                      format: decimal
+                  required:
+                    - kind
+                    - amount
+                    - base
+              required:
+                - total
+                - currency
+            modifiers:
+              type: object
+              description: Estructura que contiene la información sobre los modificadores de pago de la factura.
+              properties:
+                type:
+                  type: string
+                  description: Tipo de modificador.
+                  enum:
+                    - FEDERAL_GOVERNMENT
+                code:
+                  type: string
+                  description: Código del modificador.
+                  enum:
+                    - 17934
+                    - 18083
+                    - 18910
+                    - 18999
+                    - 19210
+                additional:
+                  type: object
+                  description: Información adicional del modificador.
+              required:
+                - type
+                - code
+          required:
+            - reference
+            - amount
+        debtor:
+          type: object
+          description: Información del deudor de la factura.
+          properties:
+            document:
+              type: string
+              description: Número de documento del deudor.
+              maxLength: 16
+            documentType:
+              type: string
+              description: Tipo de documento del deudor.
+            name:
+              type: string
+              description: Nombre del deudor.
+            surname:
+              type: string
+              description: Apellidos del deudor.
+          required:
+            - document
+            - documentType
+        altReference:
+          type: string
+          description: Referencia alterna de la factura.
+          minLength: 1
+          maxLength: 30
+        date:
+          type: string
+          description: Fecha de creación de la factura.
+          format: date
+          example: 2025-01-01
+        dueType:
+          type: number
+          description: Tipo de incremento al vencimiento. Indica si el incremento al vencimiento es un valor diario [0], valor fijo [1] o generación diaria [2].
+          enum:
+            - 0
+            - 1
+            - 2
+        dueDate:
+          type: string
+          description: Fecha y hora de vencimiento de la factura.
+          format: date-time
+        dueRate:
+          type: number
+          description: Valor a acrecentar a la factura vencida.
+          format: decimal
+        secondDueDate:
+          type: string
+          description: Segunda fecha de vencimiento de la factura.
+          format: date
+          example: 2025-02-02
+        secondDueRate:
+          type: number
+          description: Cobro luego de la segunda fecha de vencimiento. Requerido si envía secondDueDate
+          format: decimal
+        expiration:
+          type: string
+          description: Fecha y hora de expiración de la factura.
+          format: date-time
+        serviceCode:
+          type: number
+          description: Código del servicio o producto facturado.
+          maxLength: 13
+          minLength: 1
+        siteId:
+          type: integer
+          description: Identificador del sitio. Requerido si no envía el parámetro site.
+      required:
+        - payment
+        - debtor
+        - serviceCode
+        - expiration
+    Invoice:
+      title: Invoice
+      type: object
+      description: Estructura que contiene información de la factura.
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: Id de la factura
+        status:
+          type: integer
+          enum:
+            - PAYED
+            - EXPIRED
+            - ACTIVE
+            - INACTIVE
+            - HOLD
+          example: ACTIVE
+          description: Estado de la factura.
+        serviceCode:
+          type: integer
+          example: 1
+          description: Id del plan
+        payment:
+          type: object
+          description: Información sobre el pago de la factura.
+          properties:
+            reference:
+              type: string
+              description: Referencia de la factura.
+              minLength: 1
+              maxLength: 30
+            description:
+              type: string
+              description: Descripción del pago.
+              maxLength: 255
+            amount:
+              type: object
+              description: Estructura que contiene la información sobre el valor de la factura.
+              properties:
+                total:
+                  type: number
+                  description: Monto total de la factura.
+                  format: decimal
+                  maximum: 9999999999.99
+                currency:
+                  type: string
+                  description: Moneda acorde al ISO 4217 (alphabetic code).
+                  maxLength: 3
+                  example: COP
+                taxes:
+                  type: object
+                  description: Estructura que contiene la información sobre impuestos de la factura.
+                  properties:
+                    kind:
+                      type: string
+                      description: Tipo de clasificación de impuesto.
+                    amount:
+                      type: number
+                      description: Valor del impuesto.
+                      format: decimal
+                    base:
+                      type: number
+                      description: Valor base para calcular el impuesto.
+                      format: decimal
+            modifiers:
+              type: object
+              description: Estructura que contiene la información sobre los modificadores de pago de la factura.
+              properties:
+                type:
+                  type: string
+                  description: Tipo de modificador.
+                  enum:
+                    - FEDERAL_GOVERNMENT
+                code:
+                  type: string
+                  description: Código del modificador.
+                  enum:
+                    - 17934
+                    - 18083
+                    - 18910
+                    - 18999
+                    - 19210
+                additional:
+                  type: object
+                  description: Información adicional del modificador.
+        debtor:
+          type: object
+          description: Información del deudor de la factura.
+          properties:
+            document:
+              type: string
+              description: Número de documento del deudor.
+              maxLength: 16
+            documentType:
+              type: string
+              description: Tipo de documento del deudor.
+            name:
+              type: string
+              description: Nombre del deudor.
+            surname:
+              type: string
+              description: Apellidos del deudor.
+        altReference:
+          type: string
+          description: Referencia alterna de la factura.
+          minLength: 1
+          maxLength: 30
+        createdAt:
+          type: string
+          description: Fecha de creación de la factura.
+          format: date
+          example: 2025-01-01
+        expirationDate:
+          type: string
+          description: Fecha y hora de expiración de la factura.
+          format: date-time
+        finalDate:
+          type: string
+          description: Fecha y hora de finalización de plazo para pago. Es generada basada en la fecha de expiración pero con hora igual a 23:59:59.
+          format: date-time
+        siteId:
+          type: integer
+          example: 1
+          description: Identificador del sitio.
+        settlement:
+          type: object
+          description: Información sobre el pago de la factura.
+          properties:
+            authorization:
+              type: alpha_dash
+              description: Código de autorización del pago.
+              maxLength: 40
+            receipt:
+              type: alpha_num
+              description: Recibo del pago.
+              maxLength: 16
+            bankName:
+              type: string
+              description: Nombre del banco.
+              maxLength: 80
+            amount:
+              type: number
+              description: Monto total de la factura.
+              format: decimal
+              minimum: 0
+            paymentDate:
+              type: number
+              description: Monto total de la factura.
+              format: decimal
+              minimum: 0
   securitySchemes:
   responses:
   requestBodies:
